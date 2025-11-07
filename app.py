@@ -1,10 +1,32 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 import pandas as pd
 import numpy as np
 from scipy.stats import poisson
 import glob
 
 app = Flask(__name__)
+
+# === Basic Auth ===
+USERS = {
+    "client1": "password1",
+    "client2": "password2"
+}
+
+def check_auth(username, password):
+    return USERS.get(username) == password
+
+def authenticate():
+    return Response(
+        'Неуспешен достъп.', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+@app.before_request
+def require_auth():
+    auth = request.authorization
+    if not auth or not check_auth(auth.username, auth.password):
+        return authenticate()
+# === Basic Auth END ===
 
 # === Зареждане на CSV файлове ===
 csv_files = glob.glob("data/*.csv")
