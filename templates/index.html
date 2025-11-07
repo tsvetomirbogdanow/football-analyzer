@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>⚽ Football Predictor</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      background-color: #f9fafc;
+      color: #222;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #0066cc;
+      font-size: 32px;
+      margin-bottom: 25px;
+    }
+    form {
+      background: #ffffff;
+      display: inline-block;
+      padding: 25px 35px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      min-width: 150px;
+    }
+    select:focus, button:focus {
+      outline: none;
+      border-color: #0066cc;
+      box-shadow: 0 0 4px #0066cc66;
+    }
+    button {
+      background-color: #0066cc;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
+      border: none;
+      padding: 10px 25px;
+    }
+    button:hover {
+      background-color: #007bff;
+      transform: translateY(-2px);
+    }
+    .result-box {
+      margin-top: 30px;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 16px;
+      width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      animation: fadeIn 0.5s ease;
+    }
+    .result-box h2 {
+      color: #004aad;
+      margin-bottom: 10px;
+    }
+    .result-box p {
+      font-size: 18px;
+      margin: 6px 0;
+    }
+    .probabilities p b {
+      color: #0066cc;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    footer {
+      margin-top: 40px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚽ Football Match Predictor</h1>
+  <form method="POST">
+    <label>🏠 Домакин:</label>
+    <select name="home_team" required>
+      {% for team in teams %}
+      <option value="{{ team }}" {% if selected_home == team %}selected{% endif %}>{{ team }}</option>
+      {% endfor %}
+    </select>
+    <br>
+    <label>🚀 Гост:</label>
+    <select name="away_team" required>
+      {% for team in teams %}
+      <option value="{{ team }}" {% if selected_away == team %}selected{% endif %}>{{ team }}</option>
+      {% endfor %}
+    </select>
+    <br><br>
+    <button type="submit">🔮 Предвиди резултат</button>
+  </form>
+
+  {% if result %}
+  <div id="result">{{ result|safe }}</div>
+  {% endif %}
+
+  <footer>
+    <p>© 2025 Football Predictor | Анализи с изкуствен интелект ⚙️</p>
+  </footer>
+</body>
+</html>
