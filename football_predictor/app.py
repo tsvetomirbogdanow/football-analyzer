@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from scipy.stats import poisson
 import glob
+import os
 
 app = Flask(__name__)
 
@@ -152,4 +153,5 @@ def index():
     return render_template("index.html", teams=teams, result=result, selected_home=selected_home, selected_away=selected_away)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
