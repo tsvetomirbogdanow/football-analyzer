@@ -1,114 +1,97 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <title>⚽ Football Predictor</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-    body {
-      background-color: #f9fafc;
-      color: #222;
-      font-family: "Segoe UI", Roboto, Arial, sans-serif;
-      text-align: center;
-      padding: 40px;
-    }
-    h1 {
-      color: #0066cc;
-      font-size: 32px;
-      margin-bottom: 25px;
-    }
-    form {
-      background: #ffffff;
-      display: inline-block;
-      padding: 25px 35px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      min-width: 150px;
-    }
-    select:focus, button:focus {
-      outline: none;
-      border-color: #0066cc;
-      box-shadow: 0 0 4px #0066cc66;
-    }
-    button {
-      background-color: #0066cc;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.25s;
-      border: none;
-      padding: 10px 25px;
-    }
-    button:hover {
-      background-color: #007bff;
-      transform: translateY(-2px);
-    }
-    .result-box {
-      margin-top: 30px;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 16px;
-      width: 420px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      animation: fadeIn 0.5s ease;
-    }
-    .result-box h2 {
-      color: #004aad;
-      margin-bottom: 10px;
-    }
-    .result-box p {
-      font-size: 18px;
-      margin: 6px 0;
-    }
-    .probabilities p b {
-      color: #0066cc;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-    footer {
-      margin-top: 40px;
-      color: #666;
-      font-size: 14px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>⚽ Football Match Predictor</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #e0f7fa url('https://i.postimg.cc/hGrG873n/view-empty-soccer-stadium-with-fantasy-dreamy-sky.jpg') no-repeat center center;
+  background-size: cover;
+  text-align: center;
+  padding: 50px 20px;
+  color: #1f2937;
+}
+h1 { font-size: 36px; color: #00796b; margin-bottom: 40px; text-shadow: 1px 1px #fff; }
+.card-form { background: rgba(255,255,255,0.95); box-shadow: 0 15px 40px rgba(0,0,0,0.1); padding:40px 50px; max-width:650px; margin:auto; margin-bottom:30px; transition:0.3s; }
+label { display:block; font-weight:bold; font-size:16px; color:#00796b; margin-bottom:8px; text-align:left; }
+.form-group { margin-bottom:25px; text-align:left; }
+.select2-container--default .select2-selection--single { background:#f0f4f8; border:1px solid #cbd5e1; height:48px; line-height:48px; padding:0 12px; font-size:16px; color:#1f2937; }
+.select2-container--default .select2-selection--single .select2-selection__rendered { line-height:48px; }
+.select2-container--default .select2-selection--single .select2-selection__arrow { height:48px; right:12px; }
+button { background:#00796b; color:#fff; font-weight:bold; border:none; padding:14px 35px; font-size:16px; cursor:pointer; transition:0.3s; }
+button:hover { background:#009688; transform:translateY(-2px); }
+.result-box { display:none; margin-top:30px; background:rgba(255,255,255,0.95); max-width:750px; margin:auto; box-shadow:0 15px 40px rgba(0,0,0,0.08); padding:30px; animation:fadeIn 0.5s ease; min-height:180px; }
+.result-box h2 { color:#00796b; margin-bottom:15px; font-size:24px; }
+.step-done { color:green; font-weight:bold; margin-top:5px; }
+.chance-box { font-weight:bold; margin-top:10px; }
+.chance-low { color:#e74c3c; }
+.chance-medium { color:#f1c40f; }
+.chance-high { color:#27ae60; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+footer { margin-top:60px; font-size:14px; color:#475569; text-shadow:1px 1px #fff; }
+</style>
 </head>
 <body>
-  <h1>⚽ Football Match Predictor</h1>
-  <form method="POST">
-    <label>🏠 Домакин:</label>
-    <select name="home_team" required>
+<h1>⚽ Football Match Predictor</h1>
+<div class="card-form">
+<form method="POST" id="predict-form">
+  <div class="form-group">
+    <label>Домакин:</label>
+    <select name="home_team" class="team-select" required>
+      <option></option>
       {% for team in teams %}
       <option value="{{ team }}" {% if selected_home == team %}selected{% endif %}>{{ team }}</option>
       {% endfor %}
     </select>
-    <br>
-    <label>🚀 Гост:</label>
-    <select name="away_team" required>
+  </div>
+  <div class="form-group">
+    <label>Гост:</label>
+    <select name="away_team" class="team-select" required>
+      <option></option>
       {% for team in teams %}
       <option value="{{ team }}" {% if selected_away == team %}selected{% endif %}>{{ team }}</option>
       {% endfor %}
     </select>
-    <br><br>
-    <button type="submit">🔮 Предвиди резултат</button>
-  </form>
-
+  </div>
+  <button type="submit">Анализирай</button>
+</form>
+</div>
+<div class="result-box" id="analysis-result"></div>
+<footer>
+<p>© 2025 Football Predictor | Анализи с изкуствен интелект ⚙️</p>
+</footer>
+<script>
+$(document).ready(function() {
+  $('.team-select').select2({placeholder:"Избери...", allowClear:true, width:'100%'});
   {% if result %}
-  <div id="result">{{ result|safe }}</div>
+    const resultBox = $('#analysis-result');
+    resultBox.show();
+    resultBox.html('<p>Прогрес:</p>');
+    const steps = [
+      'Извличаме статистики за домакинския отбор...',
+      'Извличаме статистики за гостуващия отбор...',
+      'Вземаме предвид последните резултати и head-to-head срещи...',
+      'Симулираме 3000 мача за прогнозиране на най-вероятния изход...',
+      'Изчисляваме вероятностите и определяме най-сигурния изход...'
+    ];
+    steps.forEach((step,index)=>{
+      setTimeout(()=>{ resultBox.append('<p>' + step + ' <span class="step-done">✅</span></p>'); }, (index+1)*2000);
+    });
+    let chance = {{ chance }};
+    let chanceClass = 'chance-medium';
+    if(chance<=5) chanceClass='chance-low';
+    else if(chance>=8) chanceClass='chance-high';
+    setTimeout(()=>{
+      resultBox.append('<p style="font-weight:bold; color:#00796b; font-size:18px;">{{ result|safe }}</p>');
+      resultBox.append('<p style="font-weight:bold; color:#d32f2f; font-size:20px;">Прогноза: {{ predicted_result }}</p>');
+      resultBox.append('<p class="chance-box ' + chanceClass + '">Шанс за успех: ' + chance + '/10</p>');
+    }, 12000);
   {% endif %}
-
-  <footer>
-    <p>© 2025 Football Predictor | Анализи с изкуствен интелект ⚙️</p>
-  </footer>
+});
+</script>
 </body>
 </html>
